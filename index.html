@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html ng-app="WeatherApp">
+<head>
+  <title>Weather Info</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    body { font-family: Arial; text-align: center; }
+    input { padding: 5px; margin: 5px; }
+    .card { border: 1px solid #ccc; padding: 15px; width: 250px; margin: auto; }
+  </style>
+</head>
+<body ng-controller="WeatherCtrl">
+
+  <h2>🌦 Weather Information App</h2>
+  <input type="text" ng-model="city" placeholder="Enter City" />
+  <button ng-click="getWeather()">Get Weather</button>
+
+  <!-- Use custom directive -->
+  <weather-card data="weather"></weather-card>
+
+<script>
+var app = angular.module("WeatherApp", []);
+
+// Controller
+app.controller("WeatherCtrl", function($scope, $http){
+  $scope.city = "Madurai";
+  $scope.weather = null;
+
+  $scope.getWeather = function(){
+    var url = "https://api.openweathermap.org/data/2.5/weather?q=" 
+              + $scope.city + "&appid=YOUR_API_KEY";
+    $http.get(url).then(function(response){
+      $scope.weather = response.data;
+    });
+  }
+});
+
+// ✅ Custom Directive
+app.directive("weatherCard", function(){
+  return {
+    restrict: "E",
+    scope: { data: "=" },
+    template: `
+      <div class="card" ng-if="data">
+        <h3>{{data.name}}</h3>
+        <p>🌡 Temp: {{data.main.temp | toCelsius}} °C</p>
+        <p>💧 Humidity: {{data.main.humidity}} %</p>
+        <p>☁ Condition: {{data.weather[0].main}}</p>
+      </div>
+    `
+  };
+});
+
+// ✅ Custom Filter (Kelvin → Celsius)
+app.filter("toCelsius", function(){
+  return function(value){
+    if(!value) return "";
+    return (value - 273.15).toFixed(1); // 1 decimal place
+  };
+});
+</script>
+</body>
+</html>
