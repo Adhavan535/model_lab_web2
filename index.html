@@ -26,7 +26,7 @@ app.controller("WeatherCtrl", function($scope, $http){
 
   $scope.getWeather = function(){
     var url = "https://api.openweathermap.org/data/2.5/weather?q=" 
-              + $scope.city + "&appid=YOUR_API_KEY";
+          + $scope.city + "&units=metric&appid=87e6d9f8b2d6b9417fdca1ef83aee68d";
     $http.get(url).then(function(response){
       $scope.weather = response.data;
     });
@@ -47,7 +47,6 @@ app.directive("weatherCard", function(){
     `
   };
 });
-
 
 app.filter("toCelsius", function(){
   return function(value){
